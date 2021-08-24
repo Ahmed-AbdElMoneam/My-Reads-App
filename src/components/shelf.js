@@ -5,14 +5,14 @@ class Shelf extends React.Component {
     state = {
         booksAtCurrently: [
             {
-                industryIdentifiers: [{identifier: 0}, 3],
+                industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                 title: "To Kill a Mockingbird",
                 authors: ["Harper Lee"],
                 sliderValue: "currentlyReading",
                 imageLinks: { thumbnail: "http://books.google.com/books/content?id=PGR2AwAAQBAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73-GnPVEyb7MOCxDzOYF1PTQRuf6nCss9LMNOSWBpxBrz8Pm2_mFtWMMg_Y1dx92HT7cUoQBeSWjs3oEztBVhUeDFQX6-tWlWz1-feexS0mlJPjotcwFqAg6hBYDXuK_bkyHD-y&source=gbs_api" }
             },
             {
-                industryIdentifiers: [{identifier: 1}, 3],
+                industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                 title: "Ender's Game",
                 authors: ["Orson Scott Card"],
                 sliderValue: "currentlyReading",
@@ -21,14 +21,14 @@ class Shelf extends React.Component {
         ],
         booksAtWant: [
             {
-                industryIdentifiers: [{identifier: 2}, 3],
+                industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                 title: "1776",
                 authors: ["David McCullough"],
                 sliderValue: "wantToRead",
                 imageLinks: { thumbnail: "http://books.google.com/books/content?id=uu1mC6zWNTwC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73pGHfBNSsJG9Y8kRBpmLUft9O4BfItHioHolWNKOdLavw-SLcXADy3CPAfJ0_qMb18RmCa7Ds1cTdpM3dxAGJs8zfCfm8c6ggBIjzKT7XR5FIB53HHOhnsT7a0Cc-PpneWq9zX&source=gbs_api" }
             },
             {
-                industryIdentifiers: [{identifier: 3}, 3],
+                industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                 title: "Harry Potter and the Sorcerer's Stone",
                 authors: ["J.K. Rowling"],
                 sliderValue: "wantToRead",
@@ -37,21 +37,21 @@ class Shelf extends React.Component {
         ],
         booksAtRead: [
             {
-                industryIdentifiers: [{identifier: 4}, 3],
+                industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                 title: "The Hobbit",
                 authors: ["J.R.R. Tolkien"],
                 sliderValue: "read",
                 imageLinks: { thumbnail: "http://books.google.com/books/content?id=pD6arNyKyi8C&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE70Rw0CCwNZh0SsYpQTkMbvz23npqWeUoJvVbi_gXla2m2ie_ReMWPl0xoU8Quy9fk0Zhb3szmwe8cTe4k7DAbfQ45FEzr9T7Lk0XhVpEPBvwUAztOBJ6Y0QPZylo4VbB7K5iRSk&source=gbs_api" }
             },
             {
-                industryIdentifiers: [{identifier: 5}, 3],
+                industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                 title: "Oh, the Places You'll Go!",
                 authors: ["Seuss"],
                 sliderValue: "read",
                 imageLinks: { thumbnail: "http://books.google.com/books/content?id=1q_xAwAAQBAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE712CA0cBYP8VKbEcIVEuFJRdX1k30rjLM29Y-dw_qU1urEZ2cQ42La3Jkw6KmzMmXIoLTr50SWTpw6VOGq1leINsnTdLc_S5a5sn9Hao2t5YT7Ax1RqtQDiPNHIyXP46Rrw3aL8&source=gbs_api" }
             },
             {
-                industryIdentifiers: [{identifier: 6}, 3],
+                industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                 title: "The Adventures of Tom Sawyer",
                 authors: ["Mark Twain"],
                 sliderValue: "read",
@@ -68,7 +68,7 @@ class Shelf extends React.Component {
             this.setState( prevState => ({
                 booksAtCurrently: [...prevState.booksAtCurrently,
                     {
-                        industryIdentifiers: [{identifier: prevState.booksAtCurrently.length}, 3],
+                        industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                         title: bookTitle,
                         authors: bookAuthors,
                         sliderValue: "currentlyReading",
@@ -90,7 +90,7 @@ class Shelf extends React.Component {
             this.setState( prevState => ({
                 booksAtWant: [...prevState.booksAtWant,
                     {
-                        industryIdentifiers: [{identifier: prevState.booksAtWant.length}, 3],
+                        industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                         title: bookTitle,
                         authors: bookAuthors,
                         sliderValue: "wantToRead",
@@ -112,7 +112,7 @@ class Shelf extends React.Component {
             this.setState( prevState => ({
                 booksAtRead: [...prevState.booksAtRead,
                     {
-                        industryIdentifiers: [{identifier: prevState.booksAtRead.length}, 3],
+                        industryIdentifiers: [{identifier: Math.random().toString(36).substr(-8)}, 3],
                         title: bookTitle,
                         authors: bookAuthors,
                         sliderValue: "read",
@@ -144,7 +144,7 @@ class Shelf extends React.Component {
                     <h2 className="bookshelf-title">Currently Reading</h2>
                     <div className="bookshelf-books">
                         <ol className="books-grid">
-                            {this.state.booksAtCurrently.map(book => {
+                            {this.state.booksAtCurrently.map((book,index) => {
                                 return(
                                     <Book 
                                         key={book.industryIdentifiers[0].identifier}
@@ -163,7 +163,7 @@ class Shelf extends React.Component {
                     <h2 className="bookshelf-title">Want to Read</h2>
                     <div className="bookshelf-books">
                         <ol className="books-grid">
-                            {this.state.booksAtWant.map(book => {
+                            {this.state.booksAtWant.map((book,index) => {
                                 return(
                                     <Book 
                                         key={book.industryIdentifiers[0].identifier}
@@ -182,7 +182,7 @@ class Shelf extends React.Component {
                     <h2 className="bookshelf-title">Read</h2>
                     <div className="bookshelf-books">
                         <ol className="books-grid">
-                            {this.state.booksAtRead.map(book => {
+                            {this.state.booksAtRead.map((book,index) => {
                                 return(
                                     <Book 
                                         key={book.industryIdentifiers[0].identifier}
