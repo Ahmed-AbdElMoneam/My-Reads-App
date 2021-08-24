@@ -4,9 +4,9 @@ import Shelf from './shelf';
 class Shelves extends React.Component {
     render(){
         return(
-            this.props.Shelves.map((shelf, index) => (
-                <Shelf key={index} Books={this.props.Books} shelfTitle={this.props.Shelves[index]}/>
-            ))
+            //this.props.Shelves.map((shelf, index) => (
+                <Shelf /*key={index} num={index} shelfTitle={this.props.Shelves[index]}*/ />
+            //))
         );
     }
 }
