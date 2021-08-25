@@ -3,6 +3,7 @@ import React from 'react'
 import * as BooksAPI from './BooksAPI';
 import './App.css';
 import Shelves from './components/shelves';
+import BookResults from './components/bookResults';
 
 class BooksApp extends React.Component {
   state = {
@@ -13,19 +14,93 @@ class BooksApp extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     showSearchPage: false,
-    Books: []
+    Books: [],
+    searchBooks: [],
+    query: ''
+  }
+
+  componentDidUpdate(){
+    if(this.state.query.length){
+      BooksAPI.search(this.state.query)
+      .then((response) => {
+        this.setState((Prev) => ({
+          searchBooks: response
+        }))
+      })
+    }
   }
 
   componentDidMount(){
     BooksAPI.getAll()
-      .then((Books) => {
+      .then((res) => {
         this.setState(() => ({
-          Books
+          Books: res
         }))
       })
   }
 
+  inputField = (event) => {
+    this.setState({ query: event.target.value });
+    /*BooksAPI.search(this.state.query)
+      .then((response) => {
+        this.setState({ query: event.target.value, Books: response });
+      })*/
+  }
+
+  chooseCategory = (event) => {
+    const bookId =  event.target.parentElement.parentElement.parentElement.id;
+    if(event.target.value === "currentlyReading"){
+      this.state.searchBooks.map(book => {
+        if(bookId === book.id){
+          book.shelf = "currentlyReading";
+          this.setState((prevState) => ({
+            Books: [...prevState.Books, book]
+          }));
+          BooksAPI.update(book, "currentlyReading")
+            .then((res) => {
+              this.setState((prev) => ({
+                res
+              }))
+            })
+        }
+      });
+    }
+    else if(event.target.value === "wantToRead"){
+      this.state.searchBooks.map(book => {
+        if(bookId === book.id){
+          book.shelf = "wantToRead";
+          this.setState((prevState) => ({
+            Books: [...prevState.Books, book]
+          }));
+          BooksAPI.update(book, "wantToRead")
+            .then((res) => {
+              this.setState((prev) => ({
+                res
+              }))
+            })
+        }
+      });
+    }
+    else if(event.target.value === "read"){
+      this.state.searchBooks.map(book => {
+        if(bookId === book.id){
+          book.shelf = "read";
+          this.setState((prevState) => ({
+            Books: [...prevState.Books, book]
+          }));
+          BooksAPI.update(book, "read")
+            .then((res) => {
+              this.setState((prev) => ({
+                res
+              }))
+            })
+        }
+      });
+    }
+  }
+
   render() {
+    //console.log(this.state.Books);
     return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -41,13 +116,11 @@ class BooksApp extends React.Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                <input type="text" placeholder="Search by title or author"/>
+                <input type="text" placeholder="Search by title or author" onChange={this.inputField} /*value={this.state.query}*//>
 
               </div>
             </div>
-            <div className="search-books-results">
-              <ol className="books-grid"></ol>
-            </div>
+            <BookResults searchBooks={this.state.searchBooks} chooseCategory={this.chooseCategory}/>
           </div>
         ) : (
           <div className="list-books">
@@ -55,9 +128,7 @@ class BooksApp extends React.Component {
               <h1>MyReads</h1>
             </div>
             <div className="list-books-content">
-              <div>
-                <Shelves Shelves= {["Currently Reading", "Want to Read", "Read"]}/>
-              </div>
+                <Shelves Books={this.state.Books}/>
             </div>
             <div className="open-search">
               <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
