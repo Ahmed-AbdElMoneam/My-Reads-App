@@ -2,140 +2,223 @@ import React from 'react'
 // import * as BooksAPI from './BooksAPI'
 import * as BooksAPI from './BooksAPI';
 import './App.css';
-import Shelves from './components/shelves';
-import BookResults from './components/bookResults';
+
+import SearchPage from './components/searchPage';
+import ShelvesPage from './components/shelvesPage';
+
+import { Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false,
-    Books: [],
-    searchBooks: [],
-    query: ''
+    shelvesBooks: [], //Array for books in main page.
+    searchBooks: [],  //Array for books in search page.
+    query: '' //Search query
   }
 
+  /**
+   * With componentDidUpdate() I can fetch the results
+   * that match my search query.
+   */
   componentDidUpdate(){
-    if(this.state.query.length){
+    if(this.state.query){
       BooksAPI.search(this.state.query)
       .then((response) => {
-        this.setState((Prev) => ({
-          searchBooks: response
-        }))
+        this.setState({ searchBooks: response })
       })
     }
   }
 
+  /**
+   * Here I have fetched the set of books which will
+   * be shown in the main page  for the first time
+   */
   componentDidMount(){
     BooksAPI.getAll()
       .then((res) => {
-        this.setState(() => ({
-          Books: res
-        }))
-      })
+        this.setState({ shelvesBooks: res })
+      });
   }
 
-  inputField = (event) => {
+  /**
+   * 
+   * @param {event} event 
+   * @todo: adding what we search for in query
+   */
+  searchHandler = (event) => {
     this.setState({ query: event.target.value });
-    /*BooksAPI.search(this.state.query)
-      .then((response) => {
-        this.setState({ query: event.target.value, Books: response });
-      })*/
   }
 
-  chooseCategory = (event) => {
-    const bookId =  event.target.parentElement.parentElement.parentElement.id;
-    if(event.target.value === "currentlyReading"){
-      this.state.searchBooks.map(book => {
-        if(bookId === book.id){
-          book.shelf = "currentlyReading";
-          this.setState((prevState) => ({
-            Books: [...prevState.Books, book]
-          }));
-          BooksAPI.update(book, "currentlyReading")
-            .then((res) => {
-              this.setState((prev) => ({
-                res
-              }))
-            })
-        }
-      });
+  /**
+   * To clear input in order not to fetch any other requests
+   */
+  returningToMainPage = () => {
+    this.setState({ query: '' });
+  }
+  
+  /**
+   * 
+   * @param event 
+   * @function it moves the book we choose to the correct shelf
+   * in the main page
+   */
+  searchToChooseCategories = (event) => {
+    const currentBookId =  event.target.parentElement.parentElement.parentElement.id; //Get current book ID
+    if(event.target.value === "currentlyReading"){  //Check User choice
+      BooksAPI.get(currentBookId) //To get the book
+      .then((book) => {
+        book.shelf = "currentlyReading";
+        BooksAPI.update(book, "currentlyReading");  //Update book's shelf
+        /**
+         * Currently we are trying to make the array which will
+         * be used to show the books in our shelves. 
+         */
+        let desiredShelvesArray = this.state.shelvesBooks;
+        this.state.shelvesBooks.map((bookInShelf, shelfIndex) => {
+          if(bookInShelf.id === book.id){
+            desiredShelvesArray.splice(shelfIndex, 1);
+          }
+        });
+        desiredShelvesArray.push(book);
+        /*
+        * Here we will set the array we made to shelvesBooks 
+        * array which will show the shelves in the main page.
+        */
+        this.setState({ shelvesBooks: desiredShelvesArray });
+      })
     }
-    else if(event.target.value === "wantToRead"){
-      this.state.searchBooks.map(book => {
-        if(bookId === book.id){
-          book.shelf = "wantToRead";
-          this.setState((prevState) => ({
-            Books: [...prevState.Books, book]
-          }));
-          BooksAPI.update(book, "wantToRead")
-            .then((res) => {
-              this.setState((prev) => ({
-                res
-              }))
-            })
+    /**
+     * The rest of the function will be the same but only the 
+     * condition will vary.
+     */
+    else if(event.target.value === "wantToRead"){  
+      BooksAPI.get(currentBookId)
+      .then((book) => {
+        book.shelf = "wantToRead";
+        BooksAPI.update(book, "wantToRead");
+        let desiredShelvesArray = this.state.shelvesBooks;
+        this.state.shelvesBooks.map((bookInShelf, shelfIndex) => {
+          if(bookInShelf.id === book.id){
+            desiredShelvesArray.splice(shelfIndex, 1);
+          }
+        });
+        desiredShelvesArray.push(book);
+        this.setState({ shelvesBooks: desiredShelvesArray });
+      })
+    }else if(event.target.value === "read"){
+      BooksAPI.get(currentBookId)
+      .then((book) => {
+        book.shelf = "read";
+        BooksAPI.update(book, "read");
+        let desiredShelvesArray = this.state.shelvesBooks;
+        this.state.shelvesBooks.map((bookInShelf, shelfIndex) => {
+          if(bookInShelf.id === book.id){
+            desiredShelvesArray.splice(shelfIndex, 1);
+          }
+        });
+        desiredShelvesArray.push(book);
+        this.setState({ shelvesBooks: desiredShelvesArray });
+      })
+    }else if(event.target.value === "none"){
+      BooksAPI.get(currentBookId)
+      .then((book) => {
+        book.shelf = "none";
+        BooksAPI.update(book, "none");
+        let desiredShelvesArray = this.state.shelvesBooks;
+        this.state.shelvesBooks.map((bookInShelf, shelfIndex) => {
+          if(bookInShelf.id === book.id){
+            desiredShelvesArray.splice(shelfIndex, 1);
+          }
+        });
+        this.setState({ shelvesBooks: desiredShelvesArray });
+      })
+    }
+  }
+
+  /**
+   * 
+   * @param event 
+   * @function This function will help to change the book's shelves.
+   * 
+   */
+  movingAroundShelves = (event) => {
+    const currentBookId =  event.target.parentElement.parentElement.parentElement.id; //Get current book ID
+    if(event.target.value === "currentlyReading"){  //Check User choice
+      this.state.shelvesBooks.map((book, index) => {
+        if(currentBookId === book.id){  //The condition which generate the book we need
+          BooksAPI.update(book, "currentlyReading");  //Update book's shelf
+          /**
+           * Currently we are trying to make the array which will
+           * be used to put the books in the correct shelves. 
+           */
+          book.shelf = "currentlyReading";
+          let desiredShelvesArray = this.state.shelvesBooks;
+          desiredShelvesArray.push(book);
+          desiredShelvesArray.splice(index, 1);
+          this.setState({ shelvesBooks: desiredShelvesArray });
         }
-      });
+      })
+    }
+    /**
+     * The rest of the function will be the same but only the 
+     * condition will vary.
+     */
+    else if(event.target.value === "wantToRead"){
+      this.state.shelvesBooks.map((book, index) => {
+        if(currentBookId === book.id){
+          BooksAPI.update(book, "wantToRead");
+          book.shelf = "wantToRead";
+          let desiredShelvesArray = this.state.shelvesBooks;
+          desiredShelvesArray.push(book);
+          desiredShelvesArray.splice(index, 1);
+          this.setState({ shelvesBooks: desiredShelvesArray });
+        }
+      })
     }
     else if(event.target.value === "read"){
-      this.state.searchBooks.map(book => {
-        if(bookId === book.id){
+      this.state.shelvesBooks.map((book, index) => {
+        if(currentBookId === book.id){
+          BooksAPI.update(book, "read");
           book.shelf = "read";
-          this.setState((prevState) => ({
-            Books: [...prevState.Books, book]
-          }));
-          BooksAPI.update(book, "read")
-            .then((res) => {
-              this.setState((prev) => ({
-                res
-              }))
-            })
+          let desiredShelvesArray = this.state.shelvesBooks;
+          desiredShelvesArray.push(book);
+          desiredShelvesArray.splice(index, 1);
+          this.setState({ shelvesBooks: desiredShelvesArray });
         }
-      });
+      })
+    }
+    else if(event.target.value === "none"){
+      this.state.shelvesBooks.map((book,index) => {
+        if(currentBookId === book.id){
+          BooksAPI.update(book, "none");
+          let desiredShelvesArray = this.state.shelvesBooks;
+          desiredShelvesArray.splice(index, 1);
+          this.setState({ shelvesBooks: desiredShelvesArray });
+        }
+      })
     }
   }
 
   render() {
-    //console.log(this.state.Books);
-    return (
-      <div className="app">
-        {this.state.showSearchPage ? (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <button className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</button>
-              <div className="search-books-input-wrapper">
-                {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                <input type="text" placeholder="Search by title or author" onChange={this.inputField} /*value={this.state.query}*//>
-
-              </div>
-            </div>
-            <BookResults searchBooks={this.state.searchBooks} chooseCategory={this.chooseCategory}/>
-          </div>
-        ) : (
-          <div className="list-books">
-            <div className="list-books-title">
-              <h1>MyReads</h1>
-            </div>
-            <div className="list-books-content">
-                <Shelves Books={this.state.Books}/>
-            </div>
-            <div className="open-search">
-              <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
-            </div>
-          </div>
-        )}
-      </div>
+    return (  /*Browser Router & Route will help us to make 
+                different pages(combine different components together to make new pages)*/
+      <BrowserRouter> 
+        <div className="app">
+            <Route path="/search" render={() => (
+              <SearchPage //Passing the required props
+                query={this.state.query}
+                searchBooks={this.state.searchBooks} 
+                searchToChooseCategories={this.searchToChooseCategories}
+                searchHandler={this.searchHandler}
+                returningToMainPage={this.returningToMainPage} />
+            )} />
+            <Route exact path="/" render={() => (
+              <ShelvesPage //Passing the required props
+                shelvesBooks={this.state.shelvesBooks} 
+                movingAroundShelves={this.movingAroundShelves} />
+            )} />
+        </div>
+      </BrowserRouter>
     )
   }
 }

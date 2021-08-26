@@ -12,6 +12,9 @@ const headers = {
   'Authorization': token
 }
 
+export const controller = new AbortController();
+export const signal = controller.signal;
+
 export const get = (bookId) =>
   fetch(`${api}/books/${bookId}`, { headers })
     .then(res => res.json())
@@ -32,7 +35,7 @@ export const update = (book, shelf) =>
     body: JSON.stringify({ shelf })
   }).then(res => res.json())
 
-export const search = (query) =>
+export const search = (query) => 
   fetch(`${api}/search`, {
     method: 'POST',
     headers: {
