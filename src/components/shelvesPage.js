@@ -12,6 +12,8 @@ class ShelvesPage extends React.Component {
               </div>
               <div className="list-books-content">
                 <Shelves
+                  shelvesTitles={["Currently Reading", "Want to Read", "Read"]}
+                  shelvesNames={["currentlyReading", "wantToRead", "read"]}
                   shelvesBooks={this.props.shelvesBooks}
                   movingAroundShelves={this.props.movingAroundShelves}/>
               </div>

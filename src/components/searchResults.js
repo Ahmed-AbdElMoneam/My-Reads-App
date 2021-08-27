@@ -27,7 +27,7 @@ class BookResults extends React.Component {
                           bgImage={(book.imageLinks === undefined) ?
                             ("https://dummyimage.com/128x193/fff/aaa") :
                             (book.imageLinks.thumbnail)}
-                          shelf="none"
+                          shelf={book.shelf ? book.shelf : "none"}
                           selectHandler={this.props.searchToChooseCategories}/>
                       </div>
                     );

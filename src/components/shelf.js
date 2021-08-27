@@ -1,24 +1,24 @@
 import React from 'react';
 import Book from './book';
 
-class Read extends React.Component {
+class Shelf extends React.Component {
     render(){
         return(
             <div className="bookshelf">
-                <h2 className="bookshelf-title">Read</h2>
+                <h2 className="bookshelf-title">{this.props.shelfTitle}</h2>
                 <div className="bookshelf-books">
                     <ol className="books-grid">
                         {
                             /**
                              * Here We will loop through the books which will be put 
-                             * only in Read Shelf.
+                             * only in a particular Shelf.
                              * Also we will pass the required props for <Book /> to
                              * be displayed correctly.
                              */
                             this.props.shelvesBooks.map(book => {
                                 return(
-                                    (book.shelf === "read") &&
-                                    (<Book
+                                    (book.shelf === this.props.shelfName) &&
+                                    (<Book 
                                         key={book.id}
                                         id={book.id}
                                         title={book.title}
@@ -39,4 +39,4 @@ class Read extends React.Component {
     }
 }
 
-export default Read;
+export default Shelf;

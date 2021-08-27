@@ -1,19 +1,23 @@
 import React from 'react';
-import CurrentlyReading from './currentlyReading';
-import WantToRead from './wantToRead';
-import Read from './read';
+import Shelf from './shelf';
 
 class Shelves extends React.Component {
     render(){
         return(
             <div>
-                <CurrentlyReading
+                <Shelf
+                    shelfTitle={this.props.shelvesTitles[0]}
+                    shelfName={this.props.shelvesNames[0]}
                     shelvesBooks={this.props.shelvesBooks}
                     movingAroundShelves={this.props.movingAroundShelves}/>
-                <WantToRead
+                <Shelf
+                    shelfTitle={this.props.shelvesTitles[1]}
+                    shelfName={this.props.shelvesNames[1]}
                     shelvesBooks={this.props.shelvesBooks}
                     movingAroundShelves={this.props.movingAroundShelves}/>
-                <Read
+                <Shelf
+                    shelfTitle={this.props.shelvesTitles[2]}
+                    shelfName={this.props.shelvesNames[2]}
                     shelvesBooks={this.props.shelvesBooks}
                     movingAroundShelves={this.props.movingAroundShelves}/>
             </div>
