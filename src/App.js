@@ -42,7 +42,6 @@ class BooksApp extends React.Component {
   }
 
   handleComingResponse = async (response) => {
-    console.log(response);
     if(response.length > 0){
       response.map(responseBook => {
         const book = this.state.shelvesBooks.find(shelfBook => shelfBook.id===responseBook.id)
