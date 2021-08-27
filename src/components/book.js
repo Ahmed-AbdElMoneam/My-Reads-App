@@ -25,11 +25,7 @@ class Book extends React.Component {
                     <div className="book-title">{this.props.title}</div>
                     <div className="book-authors">
                         {
-                            (this.props.authors) && 
-                            (this.props.authors.map((author,index) => {
-                                if(index < this.props.authors.length-1){ return author+", " }
-                                else{ return author }
-                            }))
+                            (this.props.authors) && (this.props.authors.join())
                         }
                     </div>
                 </div>

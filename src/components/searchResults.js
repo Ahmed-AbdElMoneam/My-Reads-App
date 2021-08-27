@@ -15,7 +15,7 @@ class BookResults extends React.Component {
             <div className="search-books-results">
               <ol className="books-grid">
                 {
-                  (this.props.searchBooks.length > 0) &&
+                  (this.props.searchBooks.length === 20) &&
                   (this.props.searchBooks.map(book => {
                     return(
                       <div key={book.id}>
@@ -32,6 +32,10 @@ class BookResults extends React.Component {
                       </div>
                     );
                   }))
+                }
+                {
+                  (this.props.searchBooks.length === 1) && (this.props.query) &&
+                  ( <h2>Loading... Please Check that you have entered valid search term.</h2> )
                 }
               </ol>
             </div>

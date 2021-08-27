@@ -7,8 +7,9 @@ class SearchPage extends React.Component {
         return(
             <div className="search-books">
                 <div className="search-books-bar">
-                    <div>{/*create our main page link and the navigation button*/}</div>
-                    <Link to="/" onClick={this.props.returningToMainPage}><button className="close-search">Close</button></Link>
+                    <div>{/*create our main page link and the navigation button*/}
+                    <Link className="close-search" to="/" onClick={this.props.returningToMainPage}>Close</Link>
+                    </div>
                     <div className="search-books-input-wrapper">
                         <input
                             type="text"
@@ -21,6 +22,7 @@ class SearchPage extends React.Component {
                     {
                         (this.props.query) &&   //To delete all results when there is no query
                         (<SearchResults
+                            query={this.props.query}
                             searchBooks={this.props.searchBooks} 
                             searchToChooseCategories={this.props.searchToChooseCategories}/>)
                     }

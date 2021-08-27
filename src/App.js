@@ -13,37 +13,7 @@ class BooksApp extends React.Component {
   state = {
     shelvesBooks: [], //Array for books in main page.
     searchBooks: [],  //Array for books in search page.
-    query: '', //Search query
-  }
-
-
-   updateSearchResults = async () => {
-    if(this.state.query){
-      let response = await BooksAPI.search(this.state.query);
-      this.setState({}, () => {
-        this.handleComingResponse(response);
-      });
-    }
-  }
-  
-  updateBooksAPI = async (responseID, bookShelf) => {
-    await BooksAPI.update(responseID, bookShelf);
-  }
-
-  handleComingResponse = async (response) => {
-    if(response.length > 0){
-      response.map((responseBook,index) => {
-        const bk = this.state.shelvesBooks.find(shelfBook => shelfBook.id===responseBook.id)
-        if(bk){
-          responseBook.shelf=bk.shelf;
-          this.updateBooksAPI(responseBook.id, bk.shelf);
-        }else{
-          responseBook.shelf="none";
-          this.updateBooksAPI(responseBook.id, "none");
-        }
-      });
-      this.setState({ searchBooks: response });
-    }
+    query: '' //Search query
   }
 
   /**
@@ -61,11 +31,38 @@ class BooksApp extends React.Component {
    * @todo: adding what we search for in query
    */
   searchHandler = (event) => {
-    this.setState({ query: event.target.value }, () => {
-      this.setState((prev) => ({ searchBooks: prev.searchBooks }), () => {
-        this.updateSearchResults()
-      })
-    })
+    this.setState({ query: event.target.value }, () => { this.updateSearchResults() })
+  }
+
+  updateSearchResults = async () => {
+    if(this.state.query){
+      let response = await BooksAPI.search(this.state.query);
+      this.handleComingResponse(response);
+    }
+  }
+
+  handleComingResponse = async (response) => {
+    console.log(response);
+    if(response.length > 0){
+      response.map(responseBook => {
+        const book = this.state.shelvesBooks.find(shelfBook => shelfBook.id===responseBook.id)
+        if(book){
+          responseBook.shelf=book.shelf;
+          this.updateBooksAPI(responseBook, book.shelf);
+        }else{
+          responseBook.shelf="none";
+          this.updateBooksAPI(responseBook, "none");
+        }
+      });
+      this.setState({ searchBooks: response });
+    }
+    else{
+      this.setState({ searchBooks: ["Not Valid Search"] }, () => console.log(this.state.searchBooks));
+    }
+  }
+  
+  updateBooksAPI = async (response, bookShelf) => {
+    await BooksAPI.update(response, bookShelf);
   }
 
   /**
@@ -103,25 +100,7 @@ class BooksApp extends React.Component {
    * in the main page
    * 
    */
-  searchToChooseCategories = (event) => {
-    const currentBookId =  event.target.parentElement.parentElement.parentElement.id; //Get current book ID
-    //Check User choice
-    if(event.target.value === "currentlyReading"){ this.updateMainPageShelves(currentBookId, "currentlyReading") }
-    /**
-     * The rest of the function will be the same but only the condition will vary.
-     */
-    else if(event.target.value === "wantToRead"){ this.updateMainPageShelves(currentBookId, "wantToRead") }
-    else if(event.target.value === "read"){ this.updateMainPageShelves(currentBookId, "read") }
-    else if(event.target.value === "none"){ this.chooseNoneShelf(currentBookId) }
-  }
-
-  /**
-   * 
-   * @param event 
-   * @function This function will help to change the book's shelves.
-   * 
-   */
-  movingAroundShelves = (event) => {
+  addBookToCorrectShelf = (event) => {
     const currentBookId =  event.target.parentElement.parentElement.parentElement.id; //Get current book ID
     //Check User choice
     if(event.target.value === "currentlyReading"){ this.updateMainPageShelves(currentBookId, "currentlyReading") }
@@ -142,14 +121,14 @@ class BooksApp extends React.Component {
               <SearchPage //Passing the required props
                 query={this.state.query}
                 searchBooks={this.state.searchBooks} 
-                searchToChooseCategories={this.searchToChooseCategories}
+                searchToChooseCategories={this.addBookToCorrectShelf}
                 searchHandler={this.searchHandler}
                 returningToMainPage={this.returningToMainPage} />
             )} />
             <Route exact path="/" render={() => (
               <ShelvesPage //Passing the required props
                 shelvesBooks={this.state.shelvesBooks} 
-                movingAroundShelves={this.movingAroundShelves} />
+                movingAroundShelves={this.addBookToCorrectShelf} />
             )} />
         </div>
       </BrowserRouter>
